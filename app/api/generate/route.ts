@@ -3,17 +3,16 @@ import { inngest } from "@/app/api/inngest/client";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const prompt = body.prompt || "create a component";
-    const slug = body.slug || "";
+    const { prompt = "create a component", slug = "" } = await req.json();
+
     const value = slug ? `${prompt}\nSLUG:${slug}` : prompt;
 
-    const ev = await inngest.send({
+    const event = await inngest.send({
       name: "loveable/hello",
       data: { value, slug },
     });
 
-    return NextResponse.json({ ok: true, event: ev });
+    return NextResponse.json({ ok: true, event });
   } catch (err) {
     console.error("generate route error", err);
     return NextResponse.json(

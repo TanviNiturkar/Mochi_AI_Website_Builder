@@ -1,11 +1,28 @@
-export function lastAssistantTextMessageContent(res: any) {
-  if (!res) return undefined;
+import Sandbox from "@e2b/code-interpreter";
+import { AgentResult, TextMessage } from "@inngest/agent-kit";
 
-  if (res.choices?.[0]?.message?.content) {
-    return res.choices[0].message.content;
-  }
+/**
+ * Connect to an existing E2B sandbox
+ */
+export async function getSandbox(sandboxId: string) {
+  const sandbox = await Sandbox.connect(sandboxId);
+  return sandbox;
+}
 
-  if (typeof res === "string") return res;
+/**
+ * Safely extract the last assistant text from an Inngest/AgentResult
+ */
+export function lastAssistantTextMessageContent(result: AgentResult) {
+  if (!result || !Array.isArray(result.output)) return undefined;
 
-  return undefined;
+  const lastIndex = result.output.findLastIndex(
+    (message) => message.role === "assistant"
+  );
+
+  const message = result.output[lastIndex] as TextMessage | undefined;
+
+  if (!message?.content) return undefined;
+  return typeof message.content === "string"
+    ? message.content
+    : message.content.map((c) => c.text).join("");
 }
