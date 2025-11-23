@@ -17,11 +17,15 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CodeView } from "../components/code-view";
 import { FileExplorer } from "../components/file-explorer";
+import { UserControl } from "../components/ui/user-control";
+import { useAuth } from "@clerk/nextjs";
 
 interface Props {
   projectId: string;
 }
 export const ProjectView = ({ projectId }: Props) => {
+   const {has} = useAuth();
+    const hasProAccess= has?.({plan: "pro"}) 
   //const trpc = useTRPC();
   //   const { data: project } = useSuspenseQuery(
   //     trpc.projects.getOne.queryOptions({
@@ -31,6 +35,7 @@ export const ProjectView = ({ projectId }: Props) => {
 
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"preview" | "code">("preview");
+  const isFreeTier = has?.({plan: "free_user"})
 
   return (
     <div className="h-screen">
@@ -51,7 +56,7 @@ export const ProjectView = ({ projectId }: Props) => {
             />{" "}
           </Suspense>
         </ResizablePanel>
-        <ResizableHandle withHandle></ResizableHandle>
+        <ResizableHandle className="hover:bg-primary transition-colors" ></ResizableHandle>
         <ResizablePanel defaultSize={65} minSize={50}>
           <Tabs
             className="h-full gap-y-8"
@@ -73,11 +78,14 @@ export const ProjectView = ({ projectId }: Props) => {
                 </TabsTrigger>
               </TabsList>
               <div className="ml-auto flex items-center gap-x-2">
-                <Button asChild size="sm" variant="default">
+                {!hasProAccess && (
+                <Button asChild size="sm" variant="tertiary">
                   <Link href="/pricing">
                     <CrownIcon /> Upgrade
                   </Link>
                 </Button>
+                )}
+                <UserControl />
               </div>
             </div>
             <TabsContent value="preview">

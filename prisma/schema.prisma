@@ -27,6 +27,7 @@ enum MessageType {
 model Project {
   id String @id @default(uuid())
   name String
+  userId String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   messages Message[]
@@ -55,4 +56,11 @@ model Fragment {
   sandboxUrl String
   title String
   files Json
+}
+
+
+model Usage {
+  key String @id
+  points Int
+  expire DateTime?
 }

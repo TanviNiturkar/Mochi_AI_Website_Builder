@@ -8,13 +8,13 @@ import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, Loader2Icon } from "lucide-react";
 import { useTRPC } from "@/trpc/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Usage } from "./usage";
-import { Router, useRouter } from "next/router";
-interface Props {
-  projectId: string;
-}
+import { useRouter } from "next/navigation";
+import { da } from "date-fns/locale";
+import { PROJECT_TEMPLATES } from "../constant";
+import { useClerk } from "@clerk/nextjs";
+
 
 const formSchema = z.object({
   Value: z
@@ -22,13 +22,12 @@ const formSchema = z.object({
     .min(1, { message: "Message is required" })
     .max(10000, { message: "Message is too long" }),
 });
-export const MessageForm = ({ projectId }: Props) => {
- const trpc = useTRPC();
- const router = useRouter();
- const queryClient = useQueryClient()
-  const {data: usage} = useQuery(trpc.usage.status.queryOptions());
-  
-
+export const ProjectForm = () => {
+  const clerk = useClerk();
+  const [isFocused, setIsFocused] = useState(false);
+  const router = useRouter();
+  const trpc = useTRPC();
+const queryClient = useQueryClient()
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -36,41 +35,55 @@ export const MessageForm = ({ projectId }: Props) => {
     },
   });
 
-  const createMessage = useMutation(trpc.messages.create.mutationOptions({
-    onSuccess: () => {
-      form.reset();
-      queryClient.invalidateQueries(trpc.messages.getMany.queryOptions({projectId}) );
-      queryClient.invalidateQueries(trpc.usage.status.queryOptions());
+  const createProject = useMutation(trpc.projects.create.mutationOptions({
+    onSuccess: (data) => {
+      
+      queryClient.invalidateQueries(trpc.projects.getMany.queryOptions() 
+    );
+    queryClient.invalidateQueries(trpc.usage.status.queryOptions());
+    router.push(`/projects/${data.id}`);
       
     },
-    onError: (err) => { toast.error(err.message); 
+    onError: (err) => { 
+      toast.error(err.message); 
+      if(err.data?.code === "UNAUTHORIZED"){
+        clerk.openSignIn();
+        
+      }
       if(err.data?.code === "TOO_MANY_REQUESTS"){
         router.push("/pricing");
+      }
     },
+      
 
   }));
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    await createMessage.mutateAsync({
+    await createProject.mutateAsync({
       Value: values.Value,
-      projectId: projectId,
+      
     });
   };
- const [isFocused, setIsFocused] = useState(false);
-  const isPending = createMessage.isPending;
+  const onSelect=(value : string) => {
+    form.setValue("Value",value , {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+    
+    }) };
+
+  const isPending = createProject.isPending;
   const isDisabled = isPending || !form.formState.isValid;
-const showUsage = !!usage ;
+
   return (
     <Form {...form}>
-      {showUsage && (
-        <Usage points={usage.remainingPoints} msBeforeNext={usage.msBeforeNext} />
-      )}
+        <section className="space-y-6">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn(
           "relative border p-4 pt-1 rounded-xl bg-sidebar dark:bg-sidebar transition-all",
           isFocused && "shadow-xs",
-          showUsage && "rounded-t-none"
+          
         )}
       >
         <FormField
@@ -117,6 +130,22 @@ const showUsage = !!usage ;
           </Button>
         </div>
       </form>
+      
+      <div className="flex-wrap justify-center gap-2 hidden md:flex max-w-3xl">
+        {PROJECT_TEMPLATES.map((template) => (
+          <Button
+            key={template.title}
+            variant="outline"
+            size="sm"
+            className="bg-white dark:bg-sidebar"
+            onClick={() => onSelect(template.prompt)}>
+                    {template.emoji} {template.title}
+            </Button>
+        
+        
+          )  )}
+      </div>
+      </section>
     </Form>
   );
 };

@@ -1,8 +1,8 @@
 import { inngest } from "./client";
-import { openai, createAgent, createTool, createNetwork, Tool } from "@inngest/agent-kit";
+import { openai, createAgent, createTool, createNetwork, type Tool,type Message, createState } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./util";
-import { PROMPT } from "@app/api/inngest/prompts";
+import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@app/api/inngest/prompts";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 
@@ -50,12 +50,45 @@ export const codeAgentFunction = inngest.createFunction(
       try {
         const sandbox = await Sandbox.create("mochi-nextjs-test3");
         console.log("✅ Sandbox created:", sandbox.sandboxId);
+        await sandbox.setTimeout(60_000*10*3); // 30 minutes
         return sandbox.sandboxId;
       } catch (err: unknown) {
         console.error("❌ Sandbox creation failed:", err);
         throw new Error("Sandbox could not be created. Check E2B_API_KEY or Docker.");
       }
     });
+
+    const previousMessages = await step.run("get-previous-messages", async () => {
+      const formattedMessages: Message[]=[];
+      const messages = await prisma.message.findMany({
+        where: {
+          projectId : event.data.projectId,
+        },
+        orderBy : {
+          createdAt:"desc",
+        },
+        take : 5,
+      });
+      for(const message of messages){
+        formattedMessages.push({
+          type: "text",
+          role : message.role === "ASSISTANT" ? "assistant" : "user",
+          content: message.content,
+        })
+      }
+      return formattedMessages.reverse;
+      });
+
+      const state = createState<AgentState>(
+        {
+        summary: "",
+        files: {},
+        },
+        {
+          messages:previousMessages,
+        }
+      )
+
 
     // Step 2: Create Agent + Tools
     const codeAgent = createAgent<AgentState>({
@@ -155,17 +188,74 @@ export const codeAgentFunction = inngest.createFunction(
       name: "coding-agent-network",
       agents: [codeAgent],
       maxIter: 15,
+      defaultState:state,
       router: async ({ network }) => {
         if (!network.state.data.summary) return codeAgent;
       },
     });
 
     // Step 4: Run Network
-    const result = await network.run(value);
+    const result = await network.run(event.data.value,{state});
+
+
+    // Generate Fragment Title
+    const fragmentTitleGenerator = createAgent({
+      name: "fragment-title-generator",
+      description: "Generates a title for a code fragment based on its summary",
+      system: FRAGMENT_TITLE_PROMPT,
+      model: openai({ model: "gpt-4o" }),
+
+    });
+
+    // Generate Resonse Summary
+     const responseGenerator = createAgent({
+      name: "response-generator",
+      description: "Generates a response message based on the task summary",
+      system: RESPONSE_PROMPT,
+      model: openai({ model: "gpt-4o" }),
+
+    });
+
+
+    const { output : fragmentTitleOutput 
+    } = await fragmentTitleGenerator.run(result.state.data.summary || "No summary",{});
+
+
+    const { output : responseMessageOutput 
+    } = await responseGenerator.run(result.state.data.summary || "No summary",{});
+
+    const generateFragmentTitle = ()=>{
+      if(fragmentTitleOutput[0].type !== "text"){ return "Fragment" }
+      
+      if(Array.isArray(fragmentTitleOutput[0].content)){
+        return fragmentTitleOutput[0].content.map((txt)=>txt).join("")
+      }
+      else {
+        return fragmentTitleOutput[0].content;
+      }
+      
+    }
+        const generateResponse = ()=>{
+      if(responseMessageOutput[0].type !== "text"){ return "Here you go!!" }
+      
+      if(Array.isArray(responseMessageOutput[0].content)){
+        return responseMessageOutput[0].content.map((txt)=>txt).join("")
+      }
+      else {
+        return responseMessageOutput[0].content;
+      }
+      
+    }
+
+
+
 
     const isError =
   !result.state.data.summary ||
   Object.keys(result.state.data.files || {}).length === 0;
+
+
+
     // Step 5: Sandbox URL
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
       try {
@@ -193,13 +283,13 @@ export const codeAgentFunction = inngest.createFunction(
       return await prisma.message.create({
         data :{
           projectId : event.data.projectId,
-          content: result.state.data.summary || "No summary generated",
+          content: generateResponse(),
           role:"ASSISTANT",
           type:"RESULT",
           fragment : {
             create : {
               sandboxUrl: sandboxUrl || "N/A",
-              title: "Fragment",
+              title: generateFragmentTitle(),
               files: result.state.data.files,
             }
           }
