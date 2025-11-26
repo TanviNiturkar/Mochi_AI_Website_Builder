@@ -16,9 +16,11 @@ import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { CodeView } from "../components/code-view";
-import { FileExplorer } from "../components/file-explorer";
+
 import { UserControl } from "../components/ui/user-control";
 import { useAuth } from "@clerk/nextjs";
+import { FileExplorer } from "../components/ui/file-explorer";
+import { ErrorBoundary } from "react-error-boundary";
 
 interface Props {
   projectId: string;
@@ -45,9 +47,12 @@ export const ProjectView = ({ projectId }: Props) => {
           minSize={20}
           className="flex flex-col min-h-0"
         >
+          
           <Suspense fallback={<p>Loading Project...</p>}>
             <ProjectHeader projectId={projectId} />
           </Suspense>
+          
+          
           <Suspense fallback={<p>Loading Messages...</p>}>
             <MessagesContainer
               projectId={projectId}
@@ -55,6 +60,7 @@ export const ProjectView = ({ projectId }: Props) => {
               setActiveFragment={setActiveFragment}
             />{" "}
           </Suspense>
+          
         </ResizablePanel>
         <ResizableHandle className="hover:bg-primary transition-colors" ></ResizableHandle>
         <ResizablePanel defaultSize={65} minSize={50}>
@@ -62,9 +68,8 @@ export const ProjectView = ({ projectId }: Props) => {
             className="h-full gap-y-8"
             defaultValue="preview"
             value={tabState}
-            onValueChange={(value) =>
-              setTabState((value as "preview") || "code")
-            }
+            onValueChange={(value) => setTabState(value as "preview" | "code")}
+
           >
             <div className="w-full flex items-center p-2 border-b gap-x-2">
               <TabsList className="h-8 p-0 border rounded-md">

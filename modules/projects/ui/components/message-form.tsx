@@ -1,3 +1,4 @@
+"use client";
 import { useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +12,8 @@ import { useTRPC } from "@/trpc/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Usage } from "./usage";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+
 interface Props {
   projectId: string;
 }
@@ -46,9 +48,10 @@ export const MessageForm = ({ projectId }: Props) => {
     onError: (err) => { toast.error(err.message); 
       if(err.data?.code === "TOO_MANY_REQUESTS"){
         router.push("/pricing");
-    },
+    }
 
-  }));
+  },
+}));
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     await createMessage.mutateAsync({

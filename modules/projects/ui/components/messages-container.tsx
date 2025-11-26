@@ -1,3 +1,4 @@
+"use client";
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
@@ -22,7 +23,7 @@ const MessagesContainer = ({ projectId,activeFragment,setActiveFragment }: Props
     trpc.messages.getMany.queryOptions({
       projectId: projectId,
     } , {
-    refetchInterval: 5000,
+    refetchInterval: 2000,
   })
   );
 

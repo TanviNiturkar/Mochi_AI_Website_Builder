@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import { consumeCredits } from "@/lib/usage";
 import {  createTRPCRouter, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
-import { th } from "date-fns/locale";
+
 
 import z from "zod";
 
@@ -15,6 +15,8 @@ export const messagesRouter = createTRPCRouter({
   }),
   )
   .query(async({input,ctx})=>{
+
+    
     const messages = await prisma.message.findMany({
       where: {
         projectId : input.projectId,

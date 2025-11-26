@@ -4,13 +4,14 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Fragment, useCallback, useMemo, useState } from "react";
-import { Hint } from "./ui/hint";
+import { Hint } from "./hint";
 import { Button } from "@/components/ui/button";
 import { CopyCheckIcon, CopyIcon } from "lucide-react";
-import { CodeView } from "./code-view";
+
 import { convertFilesToTreeItems } from "@/lib/utils";
 import { TreeView } from "./tree-view";
 import { Breadcrumb, BreadcrumbEllipsis, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { CodeView } from "../code-view";
 
 type FileCollection = { [path: string]: string };
 

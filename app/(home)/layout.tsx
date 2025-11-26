@@ -1,3 +1,5 @@
+
+"use client";
 import { Navbar } from "@/modules/home/components/navbar";
 
 interface Props {

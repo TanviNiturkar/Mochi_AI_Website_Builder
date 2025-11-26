@@ -9,6 +9,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+
+  webpack: (config: any) => {
+    config.module.rules.push({
+      test: /\.d\.ts$/,
+      loader: "ignore-loader",
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;
