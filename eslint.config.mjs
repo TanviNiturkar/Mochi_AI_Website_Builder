@@ -10,16 +10,20 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
-  // ❗ Ignore Prisma generated client + build folders
+  // ===== Ignore folders that cause build errors =====
   {
     ignores: [
       "lib/generated/prisma/**",
       ".next/**",
-      "node_modules/**"
+      "node_modules/**",
+      "dist/**"
     ]
   },
 
-  // ❗ Disable strict rules that cause Render build failures
+  // ===== Load Next.js recommended config =====
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
+
+  // ===== Our override rules (placed at LAST so they WIN) =====
   {
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
@@ -27,10 +31,7 @@ const eslintConfig = [
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-require-imports": "off",
     }
-  },
-
-  // Your existing Next.js + TS config
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+  }
 ];
 
 export default eslintConfig;
