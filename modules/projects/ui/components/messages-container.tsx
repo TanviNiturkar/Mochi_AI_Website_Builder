@@ -27,13 +27,27 @@ const MessagesContainer = ({ projectId,activeFragment,setActiveFragment }: Props
   })
   );
 
-  useEffect(() => {
-    const lastAssistantMessage = messages.findLast((message => message.role === "ASSISTANT"));
-    if(lastAssistantMessage?.fragment && lastAssistantMessage.id !== lastAssistantMessageIdRef.current){
-      setActiveFragment(lastAssistantMessage.fragment);
-      lastAssistantMessageIdRef.current = lastAssistantMessage.id;
-    }
-  }, [messages,setActiveFragment]);
+ useEffect(() => {
+  // Existing logic: select last assistant message
+  const lastAssistantMessage = messages.findLast((message => message.role === "ASSISTANT"));
+  if (lastAssistantMessage?.fragment && lastAssistantMessage.id !== lastAssistantMessageIdRef.current) {
+    setActiveFragment(lastAssistantMessage.fragment);
+    lastAssistantMessageIdRef.current = lastAssistantMessage.id;
+  }
+
+  // ⚡ New logic: auto-select latest fragment with sandboxUrl if none is active
+  if (!activeFragment) {
+    const latestWithSandbox = messages
+      .map(msg => msg.fragment)
+      .filter(frag => frag?.sandboxUrl)
+      .filter(Boolean)
+      .slice(-1)[0] as Fragment | undefined;
+
+    if (latestWithSandbox) setActiveFragment(latestWithSandbox);
+  }
+
+}, [messages, setActiveFragment, activeFragment]);
+
 
 
   useEffect(() => {
