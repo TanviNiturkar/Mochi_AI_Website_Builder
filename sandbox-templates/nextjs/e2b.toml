@@ -1,17 +1,17 @@
 # This is a config for E2B sandbox template.
-# You can use template ID (p7y72gkb6fs4xc02mz3c) or template name (mochi-nextjs-test3) to create a sandbox:
+# You can use template ID (p7y72gkb6fs4xc02mz3c) or template name (mochi-nextjs-test) to create a sandbox:
 
 # Python SDK
 # from e2b import Sandbox, AsyncSandbox
-# sandbox = Sandbox.create("mochi-nextjs-test3") # Sync sandbox
-# sandbox = await AsyncSandbox.create("mochi-nextjs-test3") # Async sandbox
+# sandbox = Sandbox.create("mochi-nextjs-test") # Sync sandbox
+# sandbox = await AsyncSandbox.create("mochi-nextjs-test") # Async sandbox
 
 # JS SDK
 # import { Sandbox } from 'e2b'
-# const sandbox = await Sandbox.create('mochi-nextjs-test3')
+# const sandbox = await Sandbox.create('mochi-nextjs-test')
 
 team_id = "a9c60d00-2f5a-4cdc-b6b1-1b8d5d71101e"
 start_cmd = "/compile_page.sh"
 dockerfile = "e2b.Dockerfile"
-template_name = "mochi-nextjs-test3"
+template_name = "mochi-nextjs-test"
 template_id = "p7y72gkb6fs4xc02mz3c"

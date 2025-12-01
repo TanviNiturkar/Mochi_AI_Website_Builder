@@ -48,7 +48,7 @@ export const codeAgentFunction = inngest.createFunction(
     // Step 1: Create Sandbox
     const sandboxId = await step.run("get-sandbox-id", async () => {
       try {
-        const sandbox = await Sandbox.create("mochi-nextjs-test3");
+        const sandbox = await Sandbox.create("mochi-nextjs-test");
         console.log("✅ Sandbox created:", sandbox.sandboxId);
         await sandbox.setTimeout(60_000*10*3); // 30 minutes
         return sandbox.sandboxId;
@@ -76,7 +76,7 @@ export const codeAgentFunction = inngest.createFunction(
           content: message.content,
         })
       }
-      return formattedMessages.reverse;
+      return formattedMessages.reverse();
       });
 
       const state = createState<AgentState>(
@@ -95,7 +95,9 @@ export const codeAgentFunction = inngest.createFunction(
       name: "codeAgent",
       description: "An expert coding agent",
       system: PROMPT,
-      model: openai({ model: "gpt-4.1", defaultParameters: { temperature: 0.1 } }),
+      // model: openai({ model: "gpt-4.1", defaultParameters: { temperature: 0.1 } }),
+      model: openai({ model: "gpt-5-nano" }),
+
       tools: [
         createTool({
           name: "terminal",
@@ -203,7 +205,9 @@ export const codeAgentFunction = inngest.createFunction(
       name: "fragment-title-generator",
       description: "Generates a title for a code fragment based on its summary",
       system: FRAGMENT_TITLE_PROMPT,
-      model: openai({ model: "gpt-4o" }),
+      // model: openai({ model: "gpt-4o" }),
+      model: openai({ model: "gpt-5-nano" }),
+
 
     });
 
@@ -212,7 +216,9 @@ export const codeAgentFunction = inngest.createFunction(
       name: "response-generator",
       description: "Generates a response message based on the task summary",
       system: RESPONSE_PROMPT,
-      model: openai({ model: "gpt-4o" }),
+      // model: openai({ model: "gpt-4o" }),
+      model: openai({ model: "gpt-5-nano" }),
+
 
     });
 

@@ -1,6 +1,5 @@
 
 
-
 export const RESPONSE_PROMPT = `
 You are the final agent in a multi-agent system.
 Your job is to generate a short, user-friendly message explaining what was just built, based on the <task_summary> provided by the other agents.
@@ -134,4 +133,4 @@ Created a blog layout with a responsive sidebar, a dynamic list of articles, and
 - Ending without printing <task_summary>
 
 This is the ONLY valid way to terminate your task. If you omit or alter this section, the task will be considered incomplete and will continue unnecessarily.
-`;
+`
