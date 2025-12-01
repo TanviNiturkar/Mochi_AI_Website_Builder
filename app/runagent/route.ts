@@ -1,18 +1,20 @@
 import { inngest } from "@/app/api/inngest/client";
 
-export default async function handler(req : any, res:any) {
+// This route will be called with a POST request
+export async function POST(request: Request) {
   try {
-    const value = req.body?.value || "Hello World";
+    const body = await request.json();
+    const value = body?.value || "Hello World";
 
     // Trigger the helloworld function via Inngest
     const event = await inngest.send({
-      name: "loveable/hello", // the event name in your helloworld function
+      name: "loveable/hello",
       data: { value },
     });
 
-    res.status(200).json(event);
-  } catch (err) {
+    return Response.json(event, { status: 200 });
+  } catch (err: any) {
     console.error(err);
-    res.status(500).json({ error: String(err) });
+    return Response.json({ error: String(err) }, { status: 500 });
   }
 }
