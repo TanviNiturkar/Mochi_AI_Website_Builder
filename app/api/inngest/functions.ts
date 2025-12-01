@@ -95,9 +95,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "codeAgent",
       description: "An expert coding agent",
       system: PROMPT,
-      // model: openai({ model: "gpt-4.1", defaultParameters: { temperature: 0.1 } }),
-      model: openai({ model: "gpt-5-nano" }),
-
+      model: openai({ model: "gpt-4.1", defaultParameters: { temperature: 0.1 } }),
       tools: [
         createTool({
           name: "terminal",
@@ -205,9 +203,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "fragment-title-generator",
       description: "Generates a title for a code fragment based on its summary",
       system: FRAGMENT_TITLE_PROMPT,
-      // model: openai({ model: "gpt-4o" }),
-      model: openai({ model: "gpt-5-nano" }),
-
+      model: openai({ model: "gpt-4o" }),
 
     });
 
@@ -216,9 +212,7 @@ export const codeAgentFunction = inngest.createFunction(
       name: "response-generator",
       description: "Generates a response message based on the task summary",
       system: RESPONSE_PROMPT,
-      // model: openai({ model: "gpt-4o" }),
-      model: openai({ model: "gpt-5-nano" }),
-
+      model: openai({ model: "gpt-4o" }),
 
     });
 
