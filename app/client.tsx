@@ -1,15 +1,18 @@
-'use client'
+'use client';
 
-import { useTRPC } from "@/trpc/client"
-import { useSuspenseQuery } from "@tanstack/react-query"
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react";
+import { useTRPC } from "@/trpc/client";
 
 export const Client = () => {
     const trpc = useTRPC();
-    const { data } = useSuspenseQuery(trpc.createAI.queryOptions({ text: "Hello from the client" }));
 
-    useEffect(() => {})
-    const [] = useState();
+    // Removed the broken createAI query
 
-    return <div>{data?.greeting}</div>
-}
+    useEffect(() => {}, []);
+
+    return (
+        <div>
+            <p>Client component loaded.</p>
+        </div>
+    );
+};
