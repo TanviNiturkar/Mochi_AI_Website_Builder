@@ -261,7 +261,7 @@ export const codeAgentFunction = inngest.createFunction(
       try {
         const sandbox = await getSandbox(sandboxId);
         const host = sandbox.getHost(3000);
-        return `http://${host}`;
+        return `https://${host}`;
       } catch (err: unknown) {
         console.error("❌ Failed to get sandbox URL:", err);
         return null;
