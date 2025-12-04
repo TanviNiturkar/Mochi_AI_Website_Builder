@@ -1,28 +1,45 @@
 "use client";
-import { useCurrentTheme } from '@/hooks/use-current-theme';
-import {  SignUp } from '@clerk/nextjs'
-import { dark } from '@clerk/themes';
 
+import { SignUp } from "@clerk/nextjs";
 
-const Page = () => {
-  const currentTheme= useCurrentTheme();
+export default function Page() {
   return (
-  <div className='flex flex-col max-w-3xl mx-auto w-full'>
-    <section className='space-y-6 pt-[16vh] 2xl:pt-48'>
-        <div className='flex flex-col items-center'>
-         <SignUp appearance={
-          {
-            baseTheme: currentTheme === "dark" ? dark : undefined,
-            elements: {
-              cardBox: "border! shadow-none! rounded-lg!"
-             }
-          }
-         }/>;
-        </div>
-    </section>
- 
-  </div>
-  )
-}
+    <div className="flex flex-col items-center justify-center min-h-screen px-4">
+      <SignUp
+        appearance={{
+          elements: {
+            card: `
+              bg-[#F7F2E1]
+              border border-[#DCE3C2]
+              shadow-xl
+              p-10
+              rounded-none
+              max-w-md
+              w-full
+            `,
 
-export default Page;
+            formButtonPrimary: `
+              bg-[#D9A76A]
+              text-[#3A2F26]
+              rounded-none
+              py-3
+              font-semibold
+              hover:bg-[#C38E4A]
+            `,
+
+            formFieldInput: `
+              bg-[#FFF6E8]
+              border border-[#DCE3C2]
+              rounded-none
+              px-4 py-3
+              text-[#465F78]
+            `,
+
+            headerTitle: "text-[#465F78] text-2xl font-bold",
+            headerSubtitle: "text-[#6A7E6D] mb-4",
+          },
+        }}
+      />
+    </div>
+  );
+}

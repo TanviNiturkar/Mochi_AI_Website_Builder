@@ -1,113 +1,256 @@
-// "use client";
+// // "use client";
+// // import {
+// //   ResizableHandle,
+// //   ResizablePanel,
+// //   ResizablePanelGroup,
+// // } from "@/components/ui/resizable";
+// // import { useTRPC } from "@/trpc/client";
+// // import { useSuspenseQuery } from "@tanstack/react-query";
+// // import MessagesContainer from "../components/messages-container";
+// // import { Suspense, useState } from "react";
+// // import { Fragment } from "@/lib/generated/prisma";
+// // import { ProjectHeader } from "../components/project-header";
+// // import { FragmentWeb } from "../components/fragment-web";
+// // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// // import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
+// // import { Button } from "@/components/ui/button";
+// // import Link from "next/link";
+// // import { CodeView } from "../components/code-view";
+
+// // import { UserControl } from "../components/ui/user-control";
+// // import { useAuth } from "@clerk/nextjs";
+// // import { FileExplorer } from "../components/ui/file-explorer";
+// // import { ErrorBoundary } from "react-error-boundary";
+
+// // interface Props {
+// //   projectId: string;
+// // }
+// // export const ProjectView = ({ projectId }: Props) => {
+// //    const {has} = useAuth();
+// //     const hasProAccess= has?.({plan: "pro"}) 
+// //   //const trpc = useTRPC();
+// //   //   const { data: project } = useSuspenseQuery(
+// //   //     trpc.projects.getOne.queryOptions({
+// //   //       id: projectId,
+// //   //     })
+// //   //   );
+
+// //   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
+// //   const [tabState, setTabState] = useState<"preview" | "code">("preview");
+// //   const isFreeTier = has?.({plan: "free_user"})
+
+// //   return (
+// //     <div className="h-screen">
+// //       <ResizablePanelGroup direction="horizontal">
+// //         <ResizablePanel
+// //           defaultSize={35}
+// //           minSize={20}
+// //           className="flex flex-col min-h-0"
+// //         >
+          
+// //           <Suspense fallback={<p>Loading Project...</p>}>
+// //             <ProjectHeader projectId={projectId} />
+// //           </Suspense>
+          
+          
+// //           <Suspense fallback={<p>Loading Messages...</p>}>
+// //             <MessagesContainer
+// //               projectId={projectId}
+// //               activeFragment={activeFragment}
+// //               setActiveFragment={setActiveFragment}
+// //             />{" "}
+// //           </Suspense>
+          
+// //         </ResizablePanel>
+// //         <ResizableHandle className="hover:bg-primary transition-colors" ></ResizableHandle>
+// //         <ResizablePanel defaultSize={65} minSize={50}>
+// //           <Tabs
+// //             className="h-full gap-y-8"
+// //             defaultValue="preview"
+// //             value={tabState}
+// //             onValueChange={(value) => setTabState(value as "preview" | "code")}
+
+// //           >
+// //             <div className="w-full flex items-center p-2 border-b gap-x-2">
+// //               <TabsList className="h-8 p-0 border rounded-md">
+// //                 <TabsTrigger value="preview" className="rounded-md">
+// //                   <EyeIcon />
+// //                   <span>Demo</span>
+// //                 </TabsTrigger>
+// //                 <TabsTrigger value="code" className="rounded-md">
+// //                   <CodeIcon />
+// //                   <span>Code</span>
+// //                 </TabsTrigger>
+// //               </TabsList>
+// //               <div className="ml-auto flex items-center gap-x-2">
+// //                 {!hasProAccess && (
+// //                 <Button asChild size="sm" variant="tertiary">
+// //                   <Link href="/pricing">
+// //                     <CrownIcon /> Upgrade
+// //                   </Link>
+// //                 </Button>
+// //                 )}
+// //                 <UserControl />
+// //               </div>
+// //             </div>
+// //             <TabsContent value="preview">
+// //               {" "}
+// //               {!!activeFragment && <FragmentWeb data={activeFragment} />}{" "}
+// //             </TabsContent>
+// //             <TabsContent value="code" className="min-h-0">
+// //               {!!activeFragment?.files && (
+// //                 <FileExplorer files={activeFragment.files as { [path: string]:string }}/>
+// //               )}
+// //             </TabsContent>
+// //           </Tabs>
+// //         </ResizablePanel>
+// //       </ResizablePanelGroup>
+// //     </div>
+// //   );
+// // };
+
+// 'use client';
+
 // import {
 //   ResizableHandle,
 //   ResizablePanel,
 //   ResizablePanelGroup,
 // } from "@/components/ui/resizable";
-// import { useTRPC } from "@/trpc/client";
-// import { useSuspenseQuery } from "@tanstack/react-query";
+// import { Suspense, useEffect, useState } from "react";
 // import MessagesContainer from "../components/messages-container";
-// import { Suspense, useState } from "react";
-// import { Fragment } from "@/lib/generated/prisma";
-// import { ProjectHeader } from "../components/project-header";
 // import { FragmentWeb } from "../components/fragment-web";
+// import { ProjectHeader } from "../components/project-header";
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { CodeIcon, CrownIcon, EyeIcon } from "lucide-react";
+// import { CodeIcon, EyeIcon, CrownIcon } from "lucide-react";
 // import { Button } from "@/components/ui/button";
 // import Link from "next/link";
-// import { CodeView } from "../components/code-view";
-
-// import { UserControl } from "../components/ui/user-control";
 // import { useAuth } from "@clerk/nextjs";
+// import { Fragment } from "@/lib/generated/prisma";
+// import { UserControl } from "../components/ui/user-control";
 // import { FileExplorer } from "../components/ui/file-explorer";
-// import { ErrorBoundary } from "react-error-boundary";
 
 // interface Props {
 //   projectId: string;
 // }
+
 // export const ProjectView = ({ projectId }: Props) => {
-//    const {has} = useAuth();
-//     const hasProAccess= has?.({plan: "pro"}) 
-//   //const trpc = useTRPC();
-//   //   const { data: project } = useSuspenseQuery(
-//   //     trpc.projects.getOne.queryOptions({
-//   //       id: projectId,
-//   //     })
-//   //   );
+//   const { has } = useAuth();
+//   const hasProAccess = has?.({ plan: "pro" });
 
 //   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
 //   const [tabState, setTabState] = useState<"preview" | "code">("preview");
-//   const isFreeTier = has?.({plan: "free_user"})
+
+//   // AUTO SELECT FRAGMENT
+//   useEffect(() => {
+//     const checkLatestFragment = async () => {
+//       const interval = setInterval(() => {
+//         const iframeFragment = document.querySelector<HTMLElement>(
+//           "[data-sandbox-url]"
+//         );
+//         if (iframeFragment && !activeFragment) {
+//           setActiveFragment(
+//             // @ts-ignore
+//             iframeFragment.dataset.fragment as Fragment
+//           );
+//           clearInterval(interval);
+//         }
+//       }, 500);
+//     };
+//     checkLatestFragment();
+//   }, [activeFragment]);
 
 //   return (
 //     <div className="h-screen">
 //       <ResizablePanelGroup direction="horizontal">
+
+//         {/* LEFT SIDE */}
 //         <ResizablePanel
 //           defaultSize={35}
 //           minSize={20}
 //           className="flex flex-col min-h-0"
 //         >
-          
 //           <Suspense fallback={<p>Loading Project...</p>}>
 //             <ProjectHeader projectId={projectId} />
 //           </Suspense>
-          
-          
+
 //           <Suspense fallback={<p>Loading Messages...</p>}>
 //             <MessagesContainer
 //               projectId={projectId}
 //               activeFragment={activeFragment}
 //               setActiveFragment={setActiveFragment}
-//             />{" "}
+//             />
 //           </Suspense>
-          
 //         </ResizablePanel>
-//         <ResizableHandle className="hover:bg-primary transition-colors" ></ResizableHandle>
-//         <ResizablePanel defaultSize={65} minSize={50}>
+
+//         <ResizableHandle className="hover:bg-primary transition-colors" />
+
+//         {/* RIGHT SIDE — FIXED WITH bg-input */}
+//         <ResizablePanel
+//           defaultSize={65}
+//           minSize={50}
+//           className="bg-input"
+//         >
 //           <Tabs
 //             className="h-full gap-y-8"
 //             defaultValue="preview"
 //             value={tabState}
 //             onValueChange={(value) => setTabState(value as "preview" | "code")}
-
 //           >
-//             <div className="w-full flex items-center p-2 border-b gap-x-2">
-//               <TabsList className="h-8 p-0 border rounded-md">
-//                 <TabsTrigger value="preview" className="rounded-md">
-//                   <EyeIcon />
+
+//             {/* TABS HEADER */}
+//             <div className="w-full flex items-center p-2 gap-x-2 bg-card border-b border-muted">
+
+//               <TabsList className="h-8 p-0 border bg-muted/40 rounded-none shadow-sm">
+//                 <TabsTrigger
+//                   value="preview"
+//                   className="rounded-none px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:shadow-inner"
+//                 >
+//                   <EyeIcon className="size-4" />
 //                   <span>Demo</span>
 //                 </TabsTrigger>
-//                 <TabsTrigger value="code" className="rounded-md">
-//                   <CodeIcon />
+
+//                 <TabsTrigger
+//                   value="code"
+//                   className="rounded-none px-3 py-1.5 data-[state=active]:bg-card data-[state=active]:shadow-inner"
+//                 >
+//                   <CodeIcon className="size-4" />
 //                   <span>Code</span>
 //                 </TabsTrigger>
 //               </TabsList>
+
 //               <div className="ml-auto flex items-center gap-x-2">
 //                 {!hasProAccess && (
-//                 <Button asChild size="sm" variant="tertiary">
-//                   <Link href="/pricing">
-//                     <CrownIcon /> Upgrade
-//                   </Link>
-//                 </Button>
+//                   <Button asChild size="sm" variant="premium">
+//                     <Link href="/pricing">
+//                       <CrownIcon /> Upgrade
+//                     </Link>
+//                   </Button>
 //                 )}
 //                 <UserControl />
 //               </div>
 //             </div>
+
+//             {/* PREVIEW */}
 //             <TabsContent value="preview">
-//               {" "}
-//               {!!activeFragment && <FragmentWeb data={activeFragment} />}{" "}
+//               {!!activeFragment && <FragmentWeb data={activeFragment} />}
 //             </TabsContent>
+
+//             {/* CODE */}
 //             <TabsContent value="code" className="min-h-0">
 //               {!!activeFragment?.files && (
-//                 <FileExplorer files={activeFragment.files as { [path: string]:string }}/>
+//                 <FileExplorer
+//                   files={activeFragment.files as { [path: string]: string }}
+//                 />
 //               )}
 //             </TabsContent>
+
 //           </Tabs>
 //         </ResizablePanel>
 //       </ResizablePanelGroup>
 //     </div>
 //   );
 // };
+
 
 
 'use client';
@@ -141,30 +284,25 @@ export const ProjectView = ({ projectId }: Props) => {
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"preview" | "code">("preview");
 
-  // ⚡ AUTO-SELECT LATEST FRAGMENT WITH SANDBOX URL
+  // Auto-select fragment when sandbox loads
   useEffect(() => {
-    const checkLatestFragment = async () => {
-      // Wait for messages/fragments to populate (optional delay if needed)
-      // This assumes MessagesContainer updates fragments state
-      const interval = setInterval(() => {
-        const iframeFragment = document.querySelector<HTMLElement>(
-          '[data-sandbox-url]'
+    const checkLatest = setInterval(() => {
+      const iframe = document.querySelector<HTMLElement>("[data-sandbox-url]");
+      if (iframe && !activeFragment) {
+        setActiveFragment(
+          // @ts-ignore
+          iframe.dataset.fragment as Fragment
         );
-        if (iframeFragment && !activeFragment) {
-          setActiveFragment(
-            // @ts-ignore
-            iframeFragment.dataset.fragment as Fragment
-          );
-          clearInterval(interval);
-        }
-      }, 500);
-    };
-    checkLatestFragment();
+        clearInterval(checkLatest);
+      }
+    }, 500);
   }, [activeFragment]);
 
   return (
     <div className="h-screen">
       <ResizablePanelGroup direction="horizontal">
+
+        {/* LEFT SIDE */}
         <ResizablePanel defaultSize={35} minSize={20} className="flex flex-col min-h-0">
           <Suspense fallback={<p>Loading Project...</p>}>
             <ProjectHeader projectId={projectId} />
@@ -181,26 +319,51 @@ export const ProjectView = ({ projectId }: Props) => {
 
         <ResizableHandle className="hover:bg-primary transition-colors" />
 
-        <ResizablePanel defaultSize={65} minSize={50}>
+        {/* RIGHT SIDE */}
+        <ResizablePanel defaultSize={65} minSize={50} className="bg-input">
           <Tabs
-            className="h-full gap-y-8"
+            className="h-full"
             defaultValue="preview"
             value={tabState}
-            onValueChange={(value) => setTabState(value as "preview" | "code")}
+            onValueChange={(v) => setTabState(v as "preview" | "code")}
           >
-            <div className="w-full flex items-center p-2 border-b gap-x-2">
-              <TabsList className="h-8 p-0 border rounded-md">
-                <TabsTrigger value="preview" className="rounded-md">
-                  <EyeIcon /> <span>Demo</span>
+
+            {/* NAVBAR */}
+            <div className="w-full flex items-center p-2 gap-x-2 bg-card border-b border-muted">
+
+              <TabsList className="h-8 p-0 border bg-input rounded-none shadow-sm">
+                
+                <TabsTrigger
+                  value="preview"
+                  className="
+                    rounded-none px-3 py-1.5
+                    data-[state=active]:bg-primary
+                    data-[state=active]:text-primary-foreground
+                    data-[state=inactive]:bg-input
+                  "
+                >
+                  <EyeIcon className="size-4" />
+                  Demo
                 </TabsTrigger>
-                <TabsTrigger value="code" className="rounded-md">
-                  <CodeIcon /> <span>Code</span>
+
+                <TabsTrigger
+                  value="code"
+                  className="
+                    rounded-none px-3 py-1.5
+                    data-[state=active]:bg-primary
+                    data-[state=active]:text-primary-foreground
+                    data-[state=inactive]:bg-input
+                  "
+                >
+                  <CodeIcon className="size-4" />
+                  Code
                 </TabsTrigger>
+
               </TabsList>
 
               <div className="ml-auto flex items-center gap-x-2">
                 {!hasProAccess && (
-                  <Button asChild size="sm" variant="tertiary">
+                  <Button asChild size="sm" variant="premium">
                     <Link href="/pricing">
                       <CrownIcon /> Upgrade
                     </Link>
@@ -210,19 +373,22 @@ export const ProjectView = ({ projectId }: Props) => {
               </div>
             </div>
 
+            {/* PREVIEW */}
             <TabsContent value="preview">
               {!!activeFragment && <FragmentWeb data={activeFragment} />}
             </TabsContent>
 
+            {/* CODE */}
             <TabsContent value="code" className="min-h-0">
               {!!activeFragment?.files && (
                 <FileExplorer files={activeFragment.files as { [path: string]: string }} />
               )}
             </TabsContent>
+
           </Tabs>
         </ResizablePanel>
+
       </ResizablePanelGroup>
     </div>
   );
 };
-

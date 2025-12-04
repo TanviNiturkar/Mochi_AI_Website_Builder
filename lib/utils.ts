@@ -6,6 +6,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export const matchaTheme = {
+  "--bg": "#F1F5E8",               // matcha milk
+  "--bg-2": "#E3E9D5",             // lighter layer
+  "--text": "#2C3A2E",             // deep matcha text
+  "--muted": "#99A39A",            // muted green grey
+  "--accent": "#7BAF7B",           // matcha green
+  "--accent-soft": "#CFE8CF",      // soft matcha highlight
+  "--border": "#4F674F",           // dark outline border
+};
+
+
 /**
  * Convert a record of files to a tree stucture
  * @param files Record of file paths to file contents
