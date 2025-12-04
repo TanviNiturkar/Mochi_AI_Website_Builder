@@ -23,18 +23,20 @@ const Layout = ({ children }: Props) => {
         "
       />
 
-      {/* MAIN CONTENT — FORCE FULL HEIGHT EVEN IF EMPTY */}
-      <div className="flex-1 flex flex-col justify-start px-4">
-        <div className="flex-1 flex flex-col justify-center">
+      {/* MAIN CONTENT WITH SPACING */}
+      <div className="flex-1 flex flex-col px-4 pb-20">
+        <div className="w-full">
           {children}
         </div>
       </div>
 
-      {/* FOOTER — ALWAYS AT BOTTOM */}
+      {/* FOOTER */}
+      <div className="py-6 mt-2">
       <footer className="w-full text-center py-6 bg-sand text-denim border-t border-border">
         <p className="text-sm">Made with 💚 Matcha & Mochi</p>
         <p className="text-xs opacity-70 mt-1">© 2025 Mochi Website Builder</p>
       </footer>
+      </div>
     </div>
   );
 };
