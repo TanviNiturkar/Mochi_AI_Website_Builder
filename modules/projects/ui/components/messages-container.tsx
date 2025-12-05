@@ -87,8 +87,112 @@
 
 // export default MessagesContainer;
 
+//latest
+// "use client";
+// import { useTRPC } from "@/trpc/client";
+// import { useSuspenseQuery } from "@tanstack/react-query";
+// import React, { useEffect, useRef } from "react";
+// import { MessageCard } from "./message-card";
+// import { MessageForm } from "./message-form";
+// import { Fragment } from "@/lib/generated/prisma";
+// import { MessageLoading } from "./message-loading";
+
+// interface Props {
+//   projectId: string;
+//   activeFragment: Fragment | null;
+//   setActiveFragment: (fragment: Fragment | null) => void;
+// }
+
+// const MessagesContainer = ({
+//   projectId,
+//   activeFragment,
+//   setActiveFragment,
+// }: Props) => {
+//   const bottomRef = useRef<HTMLDivElement>(null);
+//   const trpc = useTRPC();
+//   const lastAssistantMessageIdRef = useRef<string | null>(null);
+
+//   const { data: messages } = useSuspenseQuery(
+//     trpc.messages.getMany.queryOptions(
+//       {
+//         projectId,
+//       },
+//       {
+//         refetchInterval: 2000,
+//       }
+//     )
+//   );
+
+//   useEffect(() => {
+//     const lastAssistantMessage = messages.findLast(
+//       (m) => m.role === "ASSISTANT"
+//     );
+
+//     if (
+//       lastAssistantMessage?.fragment &&
+//       lastAssistantMessage.id !== lastAssistantMessageIdRef.current
+//     ) {
+//       setActiveFragment(lastAssistantMessage.fragment);
+//       lastAssistantMessageIdRef.current = lastAssistantMessage.id;
+//     }
+
+//     if (!activeFragment) {
+//       const latestWithSandbox = messages
+//         .map((msg) => msg.fragment)
+//         .filter((f) => f?.sandboxUrl)
+//         .slice(-1)[0] as Fragment | undefined;
+
+//       if (latestWithSandbox) setActiveFragment(latestWithSandbox);
+//     }
+//   }, [messages, setActiveFragment, activeFragment]);
+
+//   useEffect(() => {
+//     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+//   }, [messages.length]);
+
+//   const lastMessage = messages[messages.length - 1];
+//   const isLastMessageUser = lastMessage?.role === "USER";
+
+//   return (
+//     <div className="flex flex-col flex-1 min-h-0">
+
+//       {/* ✅ Scrollable chat area */}
+//       <div className="flex-1 min-h-0 overflow-y-auto px-1 pt-65">
+//         <div className="pt-2 pr-1">
+//           {messages.map((message) => (
+//             <MessageCard
+//               key={message.id}
+//               content={message.content}
+//               role={message.role}
+//               fragment={message.fragment}
+//               createdAt={message.createdAt}
+//               isActiveFragment={activeFragment?.id === message.fragment?.id}
+//               onFragmentClick={() => setActiveFragment(message.fragment)}
+//               type={message.type}
+//             />
+//           ))}
+
+//           {isLastMessageUser && <MessageLoading />}
+//           <div ref={bottomRef} />
+//         </div>
+//       </div>
+
+//       {/* ✅ Sticky Input Bar */}
+//       <div className="sticky bottom-0 left-0 right-0 bg-background p-3 shadow-[0_-4px_8px_-2px_rgba(0,0,0,0.1)]">
+//         {/* Top fade gradient */}
+//         <div className="absolute -top-5 left-0 right-0 h-5 bg-gradient-to-b from-transparent to-background/80 pointer-events-none" />
+//         <MessageForm projectId={projectId} />
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MessagesContainer;
+
+
 
 "use client";
+
 import { useTRPC } from "@/trpc/client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React, { useEffect, useRef } from "react";
@@ -123,29 +227,29 @@ const MessagesContainer = ({
     )
   );
 
+  // Track last assistant fragment
   useEffect(() => {
-    const lastAssistantMessage = messages.findLast(
-      (m) => m.role === "ASSISTANT"
-    );
+    const lastAssistant = messages.findLast((m) => m.role === "ASSISTANT");
 
     if (
-      lastAssistantMessage?.fragment &&
-      lastAssistantMessage.id !== lastAssistantMessageIdRef.current
+      lastAssistant?.fragment &&
+      lastAssistant.id !== lastAssistantMessageIdRef.current
     ) {
-      setActiveFragment(lastAssistantMessage.fragment);
-      lastAssistantMessageIdRef.current = lastAssistantMessage.id;
+      setActiveFragment(lastAssistant.fragment);
+      lastAssistantMessageIdRef.current = lastAssistant.id;
     }
 
     if (!activeFragment) {
-      const latestWithSandbox = messages
-        .map((msg) => msg.fragment)
+      const lastWithPreview = messages
+        .map((m) => m.fragment)
         .filter((f) => f?.sandboxUrl)
-        .slice(-1)[0] as Fragment | undefined;
+        .slice(-1)[0];
 
-      if (latestWithSandbox) setActiveFragment(latestWithSandbox);
+      if (lastWithPreview) setActiveFragment(lastWithPreview);
     }
-  }, [messages, setActiveFragment, activeFragment]);
+  }, [messages, activeFragment, setActiveFragment]);
 
+  // Autoscroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
@@ -154,10 +258,10 @@ const MessagesContainer = ({
   const isLastMessageUser = lastMessage?.role === "USER";
 
   return (
-    <div className="flex flex-col flex-1 min-h-0">
+    <div className="flex flex-col h-full relative bg-background">
 
-      {/* ✅ Scrollable chat area */}
-      <div className="flex-1 min-h-0 overflow-y-auto px-1 pb-20">
+      {/* 🟢 Scrollable area */}
+      <div className="flex-1 overflow-y-auto min-h-0 px-1 pb-[90px]">
         <div className="pt-2 pr-1">
           {messages.map((message) => (
             <MessageCard
@@ -173,16 +277,17 @@ const MessagesContainer = ({
           ))}
 
           {isLastMessageUser && <MessageLoading />}
+
           <div ref={bottomRef} />
         </div>
       </div>
 
-      {/* ✅ Sticky Input Bar */}
-      <div className="sticky bottom-0 left-0 right-0 bg-background p-3 shadow-[0_-4px_8px_-2px_rgba(0,0,0,0.1)]">
-        {/* Top fade gradient */}
-        <div className="absolute -top-5 left-0 right-0 h-5 bg-gradient-to-b from-transparent to-background/80 pointer-events-none" />
+      {/* 🟣 TRUE STICKY INPUT */}
+      <div className="absolute bottom-0 left-0 right-0 bg-background p-3 shadow-[0_-4px_8px_rgba(0,0,0,0.1)] z-10">
+        <div className="absolute -top-4 left-0 right-0 h-4 bg-gradient-to-b from-transparent to-background pointer-events-none" />
         <MessageForm projectId={projectId} />
       </div>
+
     </div>
   );
 };

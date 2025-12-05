@@ -44,19 +44,70 @@
 // }
 
 
+// "use client";
+
+// import RetroComputerIntro from "@/components/ui/RetroComputerIntro";
+// import { ProjectForm } from "@/modules/home/components/project-form";
+// import { ProjectsList } from "@/modules/home/components/projects-list";
+
+// export default function Page() {
+//   return (
+//     <div className="flex flex-col max-w-5xl mx-auto w-full px-4">
+
+//       {/* Soft Gradient (kept but toned down) */}
+//       {/* <div className="absolute inset-0 -z-10 opacity-20 blur-2xl bg-gradient-to-br from-pistachio via-cactus to-sand" /> */}
+// <section className="space-y-6 pt-4 md:pt-20 pb-16">
+//         <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-center text-denim leading-tight">
+//           Build Something with Mochi
+//         </h1>
+
+//         <p className="text-base sm:text-lg md:text-xl text-denim/70 text-center">
+//           Create beautiful apps with your AI partner ✨
+//         </p>
+
+//         <div className="card max-w-3xl mx-auto w-full">
+//           <h2 className="text-xl sm:text-2xl font-semibold text-denim mb-4">
+//             Start a New Project
+//           </h2>
+//           <ProjectForm />
+//         </div>
+//       </section>
+
+//       <ProjectsList />
+//     </div>
+//   );
+// }
+
 "use client";
 
 import RetroComputerIntro from "@/components/ui/RetroComputerIntro";
 import { ProjectForm } from "@/modules/home/components/project-form";
 import { ProjectsList } from "@/modules/home/components/projects-list";
+import { useUser } from "@clerk/nextjs";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Page() {
+  const { user } = useUser();
+  const trpc = useTRPC();
+  const { data: projects } = useQuery(trpc.projects.getMany.queryOptions());
+
+  // ⭐ show bottom mochies only if user exists AND has projects
+  const showBottomMochies = !!user && Array.isArray(projects) && projects.length > 0;
+
   return (
     <div className="flex flex-col max-w-5xl mx-auto w-full px-4">
 
-      {/* Soft Gradient (kept but toned down) */}
-      {/* <div className="absolute inset-0 -z-10 opacity-20 blur-2xl bg-gradient-to-br from-pistachio via-cactus to-sand" /> */}
-<section className="space-y-6 pt-4 md:pt-20 pb-16">
+      {/* MAIN HERO SECTION */}
+      <section 
+        className="
+          space-y-6 
+          pt-14       
+          sm:pt-16     
+          md:pt-20    
+          pb-16
+        "
+      >
         <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-center text-denim leading-tight">
           Build Something with Mochi
         </h1>
@@ -69,7 +120,9 @@ export default function Page() {
           <h2 className="text-xl sm:text-2xl font-semibold text-denim mb-4">
             Start a New Project
           </h2>
-          <ProjectForm />
+
+          {/* ⭐ Only this changes */}
+          <ProjectForm showBottomMochies={showBottomMochies} />
         </div>
       </section>
 
