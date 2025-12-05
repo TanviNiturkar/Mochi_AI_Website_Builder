@@ -7,7 +7,7 @@ export const PROJECT_TEMPLATES = [
   },
   {
     emoji: "📦",
-    title: "Build an admin dashboard",
+    title: "Build a dashboard",
     prompt:
       "Create an admin dashboard with a sidebar, stat cards, a chart placeholder, and a basic table with filter and pagination using local state. Use clear visual grouping and balance in your design for a modern, professional look.",
   },

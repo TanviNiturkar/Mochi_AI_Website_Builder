@@ -591,6 +591,7 @@
 //     </Form>
 //   );
 // };
+//;"use client";
 "use client";
 
 import { useForm } from "react-hook-form";
@@ -652,6 +653,8 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
   return (
     <Form {...form}>
       <section className="space-y-6">
+
+        {/* 🌸 INPUT FORM */}
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className={cn(
@@ -659,45 +662,27 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
             isFocused && "shadow-xs"
           )}
         >
-          {/* ------------------------------ */}
-          {/* 🌸 1. ALWAYS SHOW TOP MOCHIES     */}
-          {/* ------------------------------ */}
+
+          {/* 🌸 ALL ORIGINAL TOP MOCHIES (UNCHANGED) */}
           <FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-6 right-6" />
-          <FloatingInputMochi src="/retro-computer.png" size={34} className="-top-8 left-[410px]" />
+          <FloatingInputMochi src="/retro-computer.png" size={34} className="-top-10 left-[410px]" />
           <FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-30 left-[310px]" />
-
-          {/* near input (always shown) */}
           <FloatingInputMochi src="/mochi-sleep.png" size={45} className="bottom-[55px] left-6" />
-
           <FloatingInputMochi src="/mochi-drink.png" size={30} className="-top-10 left-[210px]" />
           <FloatingInputMochi src="/retro-computer.png" size={40} className="-top-40 -right-10" />
 
-          {/* ------------------------------ */}
-          {/* 🌸 2. MID-LEVEL MOCHIES           */}
-          {/* 🌸 Show when user is NOT logged in OR has 0 projects */}
-          {/* 🌸 DO NOT show only the DEEP bottom ones */}
-          {/* ------------------------------ */}
-          {!showBottomMochies && (
+          {/* 🌸 CONDITIONAL MOCHIES (UNCHANGED) */}
+          {!showBottomMochies ? (
             <>
-              {/* LEFT-SIDE mochies you said were missing */}
-              <FloatingInputMochi src="/mochi-fly.png" size={35} className="top-40"/>
-              <FloatingInputMochi src="/retro-computer.png" size={35} className="-top-40"/>
-              <FloatingInputMochi src="/mochi-sleep.png" size={45} className="-bottom-50 left-90" />
+              <FloatingInputMochi src="/mochi-fly.png" size={35} className="top-40" />
+              <FloatingInputMochi src="/mochi-sleep.png" size={35} className="-top-30" />
+                            <FloatingInputMochi src="/mochi-fly.png" size={45} className="-top-8 right-55" />
+              <FloatingInputMochi src="/mochi-sleep.png" size={45} className="-bottom-30 -left-40" />
               <FloatingInputMochi src="/retro-computer.png" size={45} className="-bottom-70 -left-40" />
-                          <FloatingInputMochi src="/mochi-sleep.png" size={45} className="-bottom-30 -left-40" />
-              <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-105 -left-10" />
-
-              {/* Middle-right mochies */}
               <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-50 -right-10" />
               <FloatingInputMochi src="/retro-computer.png" size={40} className="-bottom-5 -right-5" />
             </>
-          )}
-
-          {/* ------------------------------ */}
-          {/* 🌸 3. FULL BOTTOM MOCHIES         */}
-          {/* 🌸 Only when user HAS projects     */}
-          {/* ------------------------------ */}
-          {showBottomMochies && (
+          ) : (
             <>
               <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-50 -right-10" />
               <FloatingInputMochi src="/mochi-fly.png" size={45} className="-bottom-50 -left-20" />
@@ -718,7 +703,7 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
             </>
           )}
 
-          {/* TEXT INPUT */}
+          {/* 🌸 INPUT BOX */}
           <FormField
             control={form.control}
             name="Value"
@@ -736,30 +721,54 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
             )}
           />
 
-          {/* FOOTER */}
+          {/* 🌸 FOOTER */}
           <div className="flex gap-x-2 items-end justify-between pt-2">
             <div className="text-[10px] text-muted-foreground font-mono">
-              <kbd className="inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium">
-                ⌘ Enter
-              </kbd>
-              &nbsp;to submit
+              <kbd className="inline-flex h-5 items-center gap-1 rounded border bg-muted px-1.5 text-[10px] font-medium">⌘ Enter</kbd>
             </div>
 
             <Button
               disabled={isDisabled}
-              className={cn(
-                "size-8 rounded-full",
-                isDisabled && "bg-muted-foreground border"
-              )}
+              className={cn("size-8 rounded-full", isDisabled && "bg-muted-foreground border")}
             >
-              {isPending ? (
-                <Loader2Icon className="size-4 animate-spin" />
-              ) : (
-                <ArrowUpIcon />
-              )}
+              {isPending ? <Loader2Icon className="size-4 animate-spin" /> : <ArrowUpIcon />}
             </Button>
           </div>
+
         </form>
+
+        {/* 🌸 PRE-PROMPTS (FIXED) */}
+        <div className="max-w-3xl mx-auto pt-4 
+                        grid grid-cols-2 gap-2  
+                        md:flex md:flex-wrap md:justify-center md:gap-2">
+
+          {PROJECT_TEMPLATES.map((template) => (
+            <Button
+              key={template.title}
+              variant="outline"
+              size="sm"
+              className="
+                bg-white dark:bg-sidebar
+                !text-[10px] py-2 px-3
+                whitespace-normal                  /* ⭐ allow wrapping */
+                [&>*]:whitespace-normal            /* ⭐ force inner text to wrap */
+                [&>*]:shrink                       /* ⭐ allow shrinking */
+                [&>*]:!text-[10px]                 
+                md:!text-sm md:[&>*]:!text-sm
+              "
+              onClick={() =>
+                form.setValue("Value", template.prompt, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                  shouldTouch: true,
+                })
+              }
+            >
+              {template.emoji} {template.title}
+            </Button>
+          ))}
+        </div>
+
       </section>
     </Form>
   );
