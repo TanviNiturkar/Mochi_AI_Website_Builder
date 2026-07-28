@@ -26,7 +26,7 @@ An AI-powered website builder that transforms natural language prompts into full
 
 # 🚀 Live Demo
 
-🌐 **Website:** https://mochi-ai-website-builder.vercel.app
+🌐 **Website:** mochi-ai-website-builder.vercel.app
 
 📂 **Repository:** https://github.com/TanviNiturkar/mochi-ai
 
