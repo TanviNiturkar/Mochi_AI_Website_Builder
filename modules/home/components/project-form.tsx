@@ -662,16 +662,20 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
             isFocused && "shadow-xs"
           )}
         >
-
-          {/* 🌸 ALL ORIGINAL TOP MOCHIES (UNCHANGED) */}
+<FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-6 right-6" />
+          <FloatingInputMochi src="/retro-computer.png" size={34} className="-top-10 left-[410px]" />
+      <FloatingInputMochi src="/mochi-sleep.png" size={45} className="bottom-[55px] left-6" />
+          <FloatingInputMochi src="/mochi-drink.png" size={30} className="-top-10 left-[210px]" />
+     
+          {/* 🌸 ALL ORIGINAL TOP MOCHIES (UNCHANGED)
           <FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-6 right-6" />
           <FloatingInputMochi src="/retro-computer.png" size={34} className="-top-10 left-[410px]" />
-          <FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-30 left-[310px]" />
+         // <FloatingInputMochi src="/mochi-fly.png" size={34} className="-top-30 left-[310px]" />
           <FloatingInputMochi src="/mochi-sleep.png" size={45} className="bottom-[55px] left-6" />
           <FloatingInputMochi src="/mochi-drink.png" size={30} className="-top-10 left-[210px]" />
-          <FloatingInputMochi src="/retro-computer.png" size={40} className="-top-40 -right-10" />
+       //   <FloatingInputMochi src="/retro-computer.png" size={40} className="-top-40 -right-10" /> */}
 
-          {/* 🌸 CONDITIONAL MOCHIES (UNCHANGED) */}
+          {/* 🌸 CONDITIONAL MOCHIES (UNCHANGED)
           {!showBottomMochies ? (
             <>
               <FloatingInputMochi src="/mochi-fly.png" size={35} className="top-40" />
@@ -684,24 +688,10 @@ export const ProjectForm = ({ showBottomMochies = true }) => {
             </>
           ) : (
             <>
-              <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-50 -right-10" />
-              <FloatingInputMochi src="/mochi-fly.png" size={45} className="-bottom-50 -left-20" />
-              <FloatingInputMochi src="/retro-computer.png" size={45} className="-bottom-70 -left-40" />
-              <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-150 -right-10" />
+                         <FloatingInputMochi src="/mochi-fly.png" size={45} className="-bottom-50 -left-20" />
               <FloatingInputMochi src="/retro-computer.png" size={40} className="-bottom-5 -right-5" />
-              <FloatingInputMochi src="/retro-computer.png" size={35} className="-top-25 -left-8" />
-              <FloatingInputMochi src="/mochi-fly.png" size={45} className="-bottom-155 -left-8" />
-              <FloatingInputMochi src="/mochi-sleep.png" size={55} className="-bottom-105 -left-10" />
-              <FloatingInputMochi src="/retro-computer.png" size={45} className="-bottom-135 -right-38" />
-              <FloatingInputMochi src="/mochi-fly.png" size={38} className="-top-35 left-5" />
-              <FloatingInputMochi src="/mochi-drink.png" size={35} className="-bottom-5 -left-10" />
-              <FloatingInputMochi src="/mochi-drink.png" size={35} className="-bottom-15 -right-10" />
-              <FloatingInputMochi src="/mochi-sleep.png" size={50} className="-bottom-9 right-[230px]" />
-              <FloatingInputMochi src="/mochi-sleep.png" size={50} className="-bottom-199 right-[230px]" />
-              <FloatingInputMochi src="/mochi-fly.png" size={50} className="-bottom-49 right-[230px]" />
-              <FloatingInputMochi src="/mochi-drink.png" size={40} className="-bottom-79 right-[230px]" />
-            </>
-          )}
+               </>
+          )} */}
 
           {/* 🌸 INPUT BOX */}
           <FormField
